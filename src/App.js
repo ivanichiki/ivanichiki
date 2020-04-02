@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer, useState, useCallback } from 'react';
-import './App.css';
+import './App.scss';
 
 function App() {
 
@@ -20,7 +20,7 @@ function App() {
   }, [])
 
 
-  const initialstate = { children: [], lastname: '', toggle: false }
+  const initialstate = { children: [], lastname: '', toggle: false, scrolltoTop:false }
 
 
 
@@ -47,12 +47,13 @@ function App() {
         else return state
       }
       case 'setLastName': {
-        console.log('hello')
+        
         return { ...state, toggle: true }
       }
-      case 'setLastName1': {
-
-        return { ...state, toggle: false }
+     
+      case 'changeToggle': {
+        console.log(action.value)
+        return {...state, scrolltoTop:action.value>1800}
       }
     }
   }
@@ -68,7 +69,15 @@ function App() {
   };
 
   const handleScroll = () => {
-    if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
+
+    let temp = window.pageYOffset;
+   
+    dispatch({type:'changeToggle', value:temp})
+
+    if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) 
+    
+    
+    return;
     dispatch({ type: 'setLastName' })
 
   }
@@ -80,7 +89,7 @@ function App() {
 
   return (
     <div className="App">
-
+       {state.scrolltoTop&&<div  onClick={()=> window.scrollTo(0, 0) } className={`hiddenbtn`}><span>BACK TO TOP</span></div>}
       {state.children.length == 0
         ? "Loading..."
         : state.children.map(el =>
@@ -150,16 +159,17 @@ function App() {
                 </div>
                 : null
               }
-
+           
             </div>
 
             )}
-
+  
           </div>
         )
 
 
       }
+
     </div>
   );
 }
